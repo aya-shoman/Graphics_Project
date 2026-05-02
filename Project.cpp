@@ -2,6 +2,7 @@
 #include <math.h>
 
 bool isNight = false;
+float cloudX = -400; // بداية من الشمال
 
 void Background() {
     glClearColor(0.5f, 0.8f, 1.0f, 1.0f); //Day
@@ -73,7 +74,7 @@ void drawHouse(float x, float y)
         glVertex2f(x+15, y);
         glVertex2f(x+15, y+50);
         glVertex2f(x-15, y+50);
-    
+
     glEnd();
     if (isNight) {
         glColor3f(1.0f, 1.0f, 0.0f);
@@ -97,6 +98,20 @@ void drawHouse(float x, float y)
         glVertex2f(x+20, y+65);
     glEnd();
 }
+void drawCloud(float x, float y) {
+    drawCircle(x, y, 20, 1, 1, 1);
+    drawCircle(x+20, y+10, 25, 1, 1, 1);
+    drawCircle(x+40, y, 20, 1, 1, 1);
+}
+void update() {
+    cloudX += 0.04; // سرعة الحركة
+
+    if (cloudX > 450) {
+        cloudX = -450; // ترجع من الأول
+    }
+
+    glutPostRedisplay();
+}
 
 void Draw()
 {
@@ -109,24 +124,29 @@ void Draw()
         drawCircle(300, 200, 50, 0.9f, 0.9f, 0.9f);
         drawCircle(320, 200, 50, 0.0f, 0.0f, 0.2f);
     }
+    drawCloud(cloudX, 200);
+drawCloud(cloudX + 200, 230);
 
     //Ground
     drawSquare(0, -600, 900, 0, 0.6, 0);
 
 
     //Houses
-    drawHouse(140, -200);
-    drawHouse(340, -200);
+drawHouse(-310, -200); // بيت على الشمال
+drawHouse(250, -200);  // بيت على اليمين
 
     //Tree
-    glColor3f(0.25f, 0.13f, 0.05f);
-    glBegin(GL_QUADS);
-        glVertex2f(-60, -40);
-        glVertex2f(-40, -40);
-        glVertex2f(-40, -200);
-        glVertex2f(-60, -200);
-    glEnd();
-    drawCircle(-50,-60,40,0,0.6,0);
+  // Tree
+glColor3f(0.25f, 0.13f, 0.05f);
+glBegin(GL_QUADS);
+    glVertex2f(-200, -40);
+    glVertex2f(-180, -40);
+    glVertex2f(-180, -200);
+    glVertex2f(-200, -200);
+glEnd();
+
+// leaves فوق الجذع مباشرة
+drawCircle(-190, -60, 40, 0, 0.6, 0);
 
 
     glFlush();
@@ -144,6 +164,7 @@ int main(int argc, char *argv[])
 
     glutDisplayFunc(Draw);
     glutKeyboardFunc(keyboard);
+    glutIdleFunc(update);
 
     glutMainLoop();
     return 0;
